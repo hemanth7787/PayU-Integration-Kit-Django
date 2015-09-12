@@ -11,6 +11,7 @@ function redirect_for_payment_at_payu() {
 <body onload="redirect_for_payment_at_payu();">
 <form action="{{ action }}" method="post" name="payu_form">{% csrf_token %}
 {{ form.as_p }}
+{{ hash_form.as_p }}
 </form>
 <body>
 <html>

@@ -159,5 +159,5 @@ LOGGING = {
 PAYU_INFO = {'merchant_key': "C0Dr8m",
              'merchant_salt': "3sf0jURk",
              # for production environment use 'https://secure.payu.in/_payment'
-             'payment_url': 'https://test.payu.in/_payment',
+             'payment_url': 'https://test.payu.in/_payment.php',
 }

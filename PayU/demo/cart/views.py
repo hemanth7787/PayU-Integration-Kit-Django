@@ -4,8 +4,10 @@ from django.http import HttpResponse, HttpRequest, Http404
 from django.template import RequestContext
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 
-from payu.forms import PayUForm
+from payu.forms import PayUForm, HashForm
+from payu.utils import verify_hash, generate_hash
 from cart.forms import OrderForm
 
 from django.contrib.webdesign.lorem_ipsum import sentence as lorem_ipsum
@@ -30,7 +32,8 @@ def checkout(request):
             payu_form = PayUForm(initial)
             if payu_form.is_valid():
                 context = {'form': payu_form,
-                           'action': "%s_payment" % settings.PAYU_INFO['payment_url']}
+                           'hash_form':HashForm({'hash':generate_hash(payu_form.cleaned_data)}),
+                           'action': "%s" % settings.PAYU_INFO['payment_url']}
                 return render(request, 'payu_form.html', context)
             else:
                 logger.error('Something went wrong! Looks like initial data\
@@ -43,7 +46,8 @@ def checkout(request):
         order_form = OrderForm(initial=initial)
     context = {'form': order_form}
     return render(request, 'checkout.html', context)
- 
+
+@csrf_exempt
 def success(request):
     if request.method == 'POST':
         if not verify_hash(request.POST):
@@ -58,12 +62,14 @@ def success(request):
     else:
         raise Http404
 
+@csrf_exempt
 def failure(request):
     if request.method == 'POST':
         return render(request, 'failure.html')
     else:
         raise Http404
 
+@csrf_exempt
 def cancel(request):
     if request.method == 'POST':
         return render(request, 'cancel.html')

@@ -1,10 +1,8 @@
 from django import forms
-from payu.utils import generate_hash
 
 class PayUForm(forms.Form):
     # payu specific fields
     key = forms.CharField()
-    hash = forms.CharField(required=False)
 
     # cart order related fields
     txnid = forms.CharField()
@@ -22,7 +20,7 @@ class PayUForm(forms.Form):
     state = forms.CharField(required=False)
     country = forms.CharField(required=False)
     zipcode = forms.RegexField(regex=r'\d{6}', min_length=6, max_length=6, required=False)
-    
+
     # merchant's side related fields
     furl = forms.URLField()
     surl = forms.URLField()
@@ -38,8 +36,6 @@ class PayUForm(forms.Form):
     drop_category = forms.CharField(required=False)
     custom_note = forms.CharField(required=False)
     note_category = forms.CharField(required=False)
-    
-    def clean(self):
-        cleaned_data = super(PayUForm, self).clean()
-        cleaned_data['hash'] = generate_hash(cleaned_data)
-        return cleaned_data
+
+class HashForm(forms.Form):
+        hash = forms.CharField(required = False)
